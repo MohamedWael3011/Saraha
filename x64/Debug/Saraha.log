@@ -1,4 +1,8 @@
 ﻿  Config.cpp
+d:\career\swe - asu\year 2\semester 2\projects\data structure\saraha\config.cpp(170): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+d:\career\swe - asu\year 2\semester 2\projects\data structure\saraha\config.cpp(188): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+d:\career\swe - asu\year 2\semester 2\projects\data structure\saraha\config.cpp(223): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+d:\career\swe - asu\year 2\semester 2\projects\data structure\saraha\config.cpp(232): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   IniFile.cpp
   main.cpp
   Misc.cpp

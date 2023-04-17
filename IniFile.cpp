@@ -70,6 +70,11 @@ bool IniFile::WriteKey(string key, string value)
 	return false;
 }
 
+bool IniFile::WriteKeyInt(string key, int value)
+{
+	return WriteKey(key, to_string(value));
+}
+
 const string IniFile::operator[](string key)
 {
 	return ReadKey(key);

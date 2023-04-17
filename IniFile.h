@@ -15,6 +15,7 @@ public:
 	string ReadKey(string key);
 	int ReadKeyInt(string key);
 	bool WriteKey(string key, string value);
+	bool WriteKeyInt(string key, int value);
 
 	const string operator[](string key);
 

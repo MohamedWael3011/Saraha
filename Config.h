@@ -10,7 +10,8 @@ private:
 	string m_file;
 
 	int m_nextaccountid;
-	map<int, UserAccount> m_useraccounts;
+public:
+	map<int, UserAccount> UserAccounts;
 
 public:
 	Config(const char* filename);
@@ -27,6 +28,11 @@ private:
 	void LoadContacts(UserAccount& acc, int idx, IniFile& cfg);
 	void LoadMessages(UserAccount& acc, int idx, IniFile& cfg);
 	void LoadFavoriteMessages(UserAccount& acc, int idx, IniFile& cfg);
+
+	void WriteAccounts(IniFile& cfg);
+	void WriteContacts(UserAccount& acc, int idx, IniFile& cfg);
+	void WriteMessages(UserAccount& acc, int idx, IniFile& cfg);
+	void WriteFavoriteMessages(UserAccount& acc, int idx, IniFile& cfg);
 
 public:
 	bool AccountExists(const string& username);

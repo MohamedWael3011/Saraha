@@ -44,9 +44,7 @@ bool Config::Save(void)
 			return false;
 
 		// Save new config
-		cfg.WriteKey("Accounts_Count", "15");
-		cfg.WriteKey("Account_Name", "Ahmed");
-		cfg.WriteKey("Account_ID2", "5010");
+		WriteAccounts(cfg);
 
 		// Commit
 		SaveConfigFile(cfg);
@@ -91,7 +89,7 @@ bool Config::SaveConfigFile(IniFile& ini)
 
 void Config::LoadAccounts(IniFile& cfg)
 {
-	m_useraccounts.clear();
+	UserAccounts.clear();
 
 	UserAccount acc;
 	int accscnt = cfg.ReadKeyInt("Accounts_Count");
@@ -111,7 +109,7 @@ void Config::LoadAccounts(IniFile& cfg)
 
 		if (i == accscnt)
 			m_nextaccountid = acc.ID() + 1;
-		m_useraccounts[acc.ID()] = acc;
+		UserAccounts[acc.ID()] = acc;
 	}
 }
 
@@ -167,9 +165,90 @@ void Config::LoadFavoriteMessages(UserAccount& acc, int idx, IniFile& cfg)
 	}
 }
 
+void Config::WriteAccounts(IniFile& cfg)
+{
+	cfg.WriteKeyInt("Accounts_Count", UserAccounts.size());
+
+	int i = 1;
+	for (auto it = UserAccounts.begin(); it != UserAccounts.end(); ++it, ++i)
+	{
+		// write account data
+		cfg.WriteKeyInt("Account_ID_" + to_string(i), it->first);
+		cfg.WriteKey("Account_Username_" + to_string(i), it->second.Username());
+		cfg.WriteKey("Account_Password_" + to_string(i), it->second.Password());
+
+		WriteContacts(it->second, i, cfg);
+		WriteMessages(it->second, i, cfg);
+		WriteFavoriteMessages(it->second, i, cfg);
+	}
+}
+
+void Config::WriteContacts(UserAccount& acc, int idx, IniFile& cfg)
+{
+	cfg.WriteKeyInt("Account_Contacts_Count_" + to_string(idx), acc.Contacts.size());
+
+	int i = 1;
+	for (auto it = acc.Contacts.begin(); it != acc.Contacts.end(); ++it, ++i)
+		cfg.WriteKeyInt("Account_Contact_" + to_string(idx) + '_' + to_string(i), *it);
+}
+
+void Config::WriteMessages(UserAccount& acc, int idx, IniFile& cfg)
+{
+	size_t size = 0;
+	int i = 1;
+	Message msg;
+	stack<Message> msgs;
+
+	for (auto it = acc.Messages.begin(); it != acc.Messages.end(); ++it)
+	{
+		msgs = it->second;
+		size += msgs.size();
+
+		while (!msgs.empty())
+		{
+			msg = msgs.top();
+
+			cfg.WriteKeyInt("Account_Message_Sender_" + to_string(idx) + '_' + to_string(i), it->first);
+
+			cfg.WriteKeyInt("Account_Message_Index_" + to_string(idx) + '_' + to_string(i), msg.Index);
+			cfg.WriteKey("Account_Message_Content_" + to_string(idx) + '_' + to_string(i), msg.Content);
+			cfg.WriteKey("Account_Message_Date_" + to_string(idx) + '_' + to_string(i), DateToString(msg.SentDate));
+			cfg.WriteKeyInt("Account_Message_Favorite_" + to_string(idx) + '_' + to_string(i), msg.IsFavorite);
+
+			msgs.pop();
+			++i;
+		}
+	}
+
+	cfg.WriteKeyInt("Account_Messages_Count_" + to_string(idx), size);
+}
+
+void Config::WriteFavoriteMessages(UserAccount& acc, int idx, IniFile& cfg)
+{
+	int i = 1;
+	pair<int, Message> favorite;
+	queue<pair<int, Message>> favorites = acc.Favorites;
+
+	cfg.WriteKeyInt("Account_Favorites_Count_" + to_string(idx), favorites.size());
+
+	while (!favorites.empty())
+	{
+		favorite = favorites.front();
+
+		cfg.WriteKeyInt("Account_Favorite_Sender_" + to_string(idx) + '_' + to_string(i), favorite.first);
+
+		cfg.WriteKeyInt("Account_Favorite_MsgIndex_" + to_string(idx) + '_' + to_string(i), favorite.second.Index);
+		cfg.WriteKey("Account_Favorite_Content_" + to_string(idx) + '_' + to_string(i), favorite.second.Content);
+		cfg.WriteKey("Account_Favorite_Date_" + to_string(idx) + '_' + to_string(i), DateToString(favorite.second.SentDate));
+
+		favorites.pop();
+		++i;
+	}
+}
+
 bool Config::AccountExists(const string& username)
 {
-	for (auto it = m_useraccounts.begin(); it != m_useraccounts.end(); ++it)
+	for (auto it = UserAccounts.begin(); it != UserAccounts.end(); ++it)
 	{
 		if (it->second.Username().compare(username) == 0)
 			return true;
@@ -179,7 +258,7 @@ bool Config::AccountExists(const string& username)
 
 bool Config::AccountExists(const string& username, const string& pw)
 {
-	for (auto it = m_useraccounts.begin(); it != m_useraccounts.end(); ++it)
+	for (auto it = UserAccounts.begin(); it != UserAccounts.end(); ++it)
 	{
 		if (it->second.Username().compare(username) == 0 && it->second.Password().compare(pw) == 0)
 			return true;
@@ -189,8 +268,8 @@ bool Config::AccountExists(const string& username, const string& pw)
 
 UserAccount* Config::GetUserAccount(int id)
 {
-	auto it = m_useraccounts.find(id);
-	return it != m_useraccounts.end() ? &it->second : NULL;
+	auto it = UserAccounts.find(id);
+	return it != UserAccounts.end() ? &it->second : NULL;
 }
 
 int Config::PopNextAccountID(void)
