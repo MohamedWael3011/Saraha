@@ -42,7 +42,7 @@ string IniFile::ReadKey(string key)
 
 int IniFile::ReadKeyInt(string key)
 {
-	return atoi(ReadKey(key));
+	return atoi(ReadKey(key).c_str());
 }
 
 bool IniFile::WriteKey(string key, string value)

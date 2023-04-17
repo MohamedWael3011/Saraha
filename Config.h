@@ -23,9 +23,17 @@ private:
 	bool GetConfigFile(IniFile& ini) const;
 	bool SaveConfigFile(IniFile& ini);
 
+	void LoadAccounts(IniFile& cfg);
+	void LoadContacts(UserAccount& acc, int idx, IniFile& cfg);
+	void LoadMessages(UserAccount& acc, int idx, IniFile& cfg);
+	void LoadFavoriteMessages(UserAccount& acc, int idx, IniFile& cfg);
+
 public:
 	bool AccountExists(const string& username);
 	bool AccountExists(const string& username, const string& pw);
 
 	UserAccount* GetUserAccount(int id);
+	int PopNextAccountID();
+
+	static void AppendMessage(UserAccount& acc, int senderid, Message& msg);
 };

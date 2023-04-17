@@ -154,6 +154,7 @@
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="IniFile.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Misc.cpp" />
     <ClCompile Include="UserAccount.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +162,8 @@
     <ClInclude Include="essentials.h" />
     <ClInclude Include="IniFile.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="Message.h" />
+    <ClInclude Include="Misc.h" />
     <ClInclude Include="UserAccount.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

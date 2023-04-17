@@ -1,9 +1,10 @@
 #include "Config.h"
+#include "Misc.h"
 
 #include <fstream>
 #include <sstream>
 
-Config::Config(const char* filename) : m_loaded(false), m_file(filename)
+Config::Config(const char* filename) : m_loaded(false), m_file(filename), m_nextaccountid(1)
 {
 }
 
@@ -21,12 +22,7 @@ bool Config::Load(void)
 			return false;
 
 		// Load config
-		int accscnt = cfg.ReadKeyInt("Accounts_Count");
-
-		for (int i = 0; i < accscnt; ++i)
-		{
-
-		}
+		LoadAccounts(cfg);
 
 		m_loaded = true;
 		return true;
@@ -46,8 +42,6 @@ bool Config::Save(void)
 		IniFile cfg(false);
 		if (!GetConfigFile(cfg))
 			return false;
-
-		printf("Loaded: [%s]\n", cfg["Accounts_Count"].c_str());
 
 		// Save new config
 		cfg.WriteKey("Accounts_Count", "15");
@@ -95,11 +89,89 @@ bool Config::SaveConfigFile(IniFile& ini)
 	return false;
 }
 
+void Config::LoadAccounts(IniFile& cfg)
+{
+	m_useraccounts.clear();
+
+	UserAccount acc;
+	int accscnt = cfg.ReadKeyInt("Accounts_Count");
+
+	for (int i = 1; i <= accscnt; ++i)
+	{
+		// load account data
+		acc.Set(
+			cfg.ReadKeyInt("Account_ID_" + to_string(i)),
+			cfg.ReadKey("Account_Username_" + to_string(i)),
+			cfg.ReadKey("Account_Password_" + to_string(i))
+		);
+
+		LoadContacts(acc, i, cfg);
+		LoadMessages(acc, i, cfg);
+		LoadFavoriteMessages(acc, i, cfg);
+
+		if (i == accscnt)
+			m_nextaccountid = acc.ID() + 1;
+		m_useraccounts[acc.ID()] = acc;
+	}
+}
+
+void Config::LoadContacts(UserAccount& acc, int idx, IniFile& cfg)
+{
+	// clear
+	acc.Contacts.clear();
+
+	// load
+	int contactscnt = cfg.ReadKeyInt("Account_Contacts_Count_" + to_string(idx));
+	for (int i = 1; i <= contactscnt; ++i)
+		acc.Contacts.insert(cfg.ReadKeyInt("Account_Contact_" + to_string(idx) + '_' + to_string(i)));
+}
+
+void Config::LoadMessages(UserAccount& acc, int idx, IniFile& cfg)
+{
+	// clear
+	acc.Messages.clear();
+
+	// load
+	Message msg;
+	int msgcnt = cfg.ReadKeyInt("Account_Messages_Count_" + to_string(idx));
+
+	for (int i = 1; i <= msgcnt; ++i)
+	{
+		msg.Index = cfg.ReadKeyInt("Account_Message_Index_" + to_string(idx) + '_' + to_string(i));
+		msg.Content = cfg.ReadKey("Account_Message_Content_" + to_string(idx) + '_' + to_string(i));
+		msg.SentDate = StringToDate(cfg.ReadKey("Account_Message_Date_" + to_string(idx) + '_' + to_string(i)));
+		msg.IsFavorite = cfg.ReadKeyInt("Account_Message_Favorite_" + to_string(idx) + '_' + to_string(i));
+
+		AppendMessage(acc, cfg.ReadKeyInt("Account_Message_Sender_" + to_string(idx) + '_' + to_string(i)), msg);
+	}
+}
+
+void Config::LoadFavoriteMessages(UserAccount& acc, int idx, IniFile& cfg)
+{
+	// clear
+	queue<pair<int, Message>>().swap(acc.Favorites);
+
+	// load
+	Message msg;
+	msg.IsFavorite = true;
+
+	int msgcnt = cfg.ReadKeyInt("Account_Favorites_Count_" + to_string(idx));
+
+	for (int i = 1; i <= msgcnt; ++i)
+	{
+		msg.Index = cfg.ReadKeyInt("Account_Favorite_MsgIndex_" + to_string(idx) + '_' + to_string(i));
+		msg.Content = cfg.ReadKey("Account_Favorite_Content_" + to_string(idx) + '_' + to_string(i));
+		msg.SentDate = StringToDate(cfg.ReadKey("Account_Favorite_Date_" + to_string(idx) + '_' + to_string(i)));
+
+		acc.Favorites.push(pair<int, Message>(cfg.ReadKeyInt("Account_Favorite_Sender_" + to_string(idx) + '_' + to_string(i)), msg));
+	}
+}
+
 bool Config::AccountExists(const string& username)
 {
 	for (auto it = m_useraccounts.begin(); it != m_useraccounts.end(); ++it)
 	{
-		if (it->second.Username.compare(username) == 0)
+		if (it->second.Username().compare(username) == 0)
 			return true;
 	}
 	return false;
@@ -109,7 +181,7 @@ bool Config::AccountExists(const string& username, const string& pw)
 {
 	for (auto it = m_useraccounts.begin(); it != m_useraccounts.end(); ++it)
 	{
-		if (it->second.Username.compare(username) == 0 && it->second.Password.compare(pw) == 0)
+		if (it->second.Username().compare(username) == 0 && it->second.Password().compare(pw) == 0)
 			return true;
 	}
 	return false;
@@ -119,4 +191,23 @@ UserAccount* Config::GetUserAccount(int id)
 {
 	auto it = m_useraccounts.find(id);
 	return it != m_useraccounts.end() ? &it->second : NULL;
+}
+
+int Config::PopNextAccountID(void)
+{
+	return m_nextaccountid++;
+}
+
+void Config::AppendMessage(UserAccount& acc, int senderid, Message& msg)
+{
+	auto it = acc.Messages.find(senderid);
+	if (it != acc.Messages.end())
+		it->second.push(msg);
+	else
+	{
+		stack<Message> msgs;
+		msgs.push(msg);
+
+		acc.Messages[senderid] = msgs;
+	}
 }

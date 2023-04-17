@@ -1,2 +1,7 @@
 ﻿  Config.cpp
+  IniFile.cpp
+  main.cpp
+  Misc.cpp
+  UserAccount.cpp
+  Generating Code...
   Saraha.vcxproj -> D:\Career\SWE - ASU\Year 2\Semester 2\Projects\Data Structure\Saraha\x64\Debug\Saraha.exe
