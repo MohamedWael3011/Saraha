@@ -8,3 +8,4 @@ struct Message
 	SYSTEMTIME SentDate;
 	bool IsFavorite;
 };
+

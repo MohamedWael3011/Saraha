@@ -45,8 +45,27 @@ bool UserAccount::PopMessage(int User_ID) {
 	return false;
 
 }
-void UserAccount::ViewContacts() { //ordered by most messages
+void UserAccount::ViewContacts() { 
+	set<int>::iterator itr;		   	
+	vector<pair<int,int>>ContactTotalMessages;
+
+	for (itr = Contacts.begin();itr != Contacts.end(); itr++) // Retrieving Contact's Sent Messages
+	{
+		int ContactID = *itr;
+		int ContactMessages= Messages[ContactID].size();
+		ContactTotalMessages.push_back(make_pair(ContactMessages, ContactID)); // Storing as (Messages,ID) for easier sort lol :')
+	}
+	if (ContactTotalMessages.empty()) {
+		cout << "Oh no, you don't have any contacts. :(" << endl;
+	}
+	else {
+		sort(ContactTotalMessages.begin(), ContactTotalMessages.end(), greater<>());
+		for (auto i : ContactTotalMessages) {
+			cout << "Contact with ID " << i.second << ": " << i.first << "  Message" << endl;
+		}
+	}
 }
+
 void UserAccount::ViewMessages() {
 
 }

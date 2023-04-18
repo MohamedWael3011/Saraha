@@ -1,12 +1,12 @@
-﻿  Config.cpp
-d:\career\swe - asu\year 2\semester 2\projects\data structure\saraha\config.cpp(170): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-d:\career\swe - asu\year 2\semester 2\projects\data structure\saraha\config.cpp(188): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-d:\career\swe - asu\year 2\semester 2\projects\data structure\saraha\config.cpp(223): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-d:\career\swe - asu\year 2\semester 2\projects\data structure\saraha\config.cpp(232): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  IniFile.cpp
+﻿  UserAccount.cpp
+E:\DS\Saraha\UserAccount.cpp(55,50): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   main.cpp
-d:\career\swe - asu\year 2\semester 2\projects\data structure\saraha\main.cpp(26): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-  Misc.cpp
-  UserAccount.cpp
+E:\DS\Saraha\main.cpp(23,29): warning C4838: conversion from 'time_t' to 'WORD' requires a narrowing conversion
+E:\DS\Saraha\main.cpp(23,29): warning C4244: 'initializing': conversion from 'time_t' to 'WORD', possible loss of data
+E:\DS\Saraha\main.cpp(24,30): warning C4838: conversion from 'time_t' to 'WORD' requires a narrowing conversion
+E:\DS\Saraha\main.cpp(24,30): warning C4244: 'initializing': conversion from 'time_t' to 'WORD', possible loss of data
+E:\DS\Saraha\main.cpp(25,30): warning C4838: conversion from 'time_t' to 'WORD' requires a narrowing conversion
+E:\DS\Saraha\main.cpp(25,30): warning C4244: 'initializing': conversion from 'time_t' to 'WORD', possible loss of data
+E:\DS\Saraha\main.cpp(44,43): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   Generating Code...
-  Saraha.vcxproj -> D:\Career\SWE - ASU\Year 2\Semester 2\Projects\Data Structure\Saraha\x64\Debug\Saraha.exe
+  Saraha.vcxproj -> E:\DS\Saraha\x64\Debug\Saraha.exe
