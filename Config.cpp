@@ -246,24 +246,24 @@ void Config::WriteFavoriteMessages(UserAccount& acc, int idx, IniFile& cfg)
 	}
 }
 
-bool Config::AccountExists(const string& username)
+UserAccount* Config::AccountExists(const string& username)
 {
 	for (auto it = UserAccounts.begin(); it != UserAccounts.end(); ++it)
 	{
 		if (it->second.Username().compare(username) == 0)
-			return true;
+			return &it->second;
 	}
-	return false;
+	return NULL;
 }
 
-bool Config::AccountExists(const string& username, const string& pw)
+UserAccount* Config::AccountExists(const string& username, const string& pw)
 {
 	for (auto it = UserAccounts.begin(); it != UserAccounts.end(); ++it)
 	{
 		if (it->second.Username().compare(username) == 0 && it->second.Password().compare(pw) == 0)
-			return true;
+			return &it->second;
 	}
-	return false;
+	return NULL;
 }
 
 UserAccount* Config::GetUserAccount(int id)
