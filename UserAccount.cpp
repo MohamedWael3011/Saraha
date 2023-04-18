@@ -32,15 +32,17 @@ string UserAccount::Password(void) const
 }
 bool UserAccount::AddContact(int User_ID) {
 
+	return false;
 }
 
 bool UserAccount::RemoveContact(int User_ID) {
-
+	return false;
 }
 void UserAccount::SendMessage(int User_ID, string content) {
 
 }
 bool UserAccount::PopMessage(int User_ID) {
+	return false;
 
 }
 void UserAccount::ViewContacts() { //ordered by most messages
@@ -52,17 +54,20 @@ void UserAccount::ViewMessages(int User_ID) {
 
 }
 bool UserAccount::PutFavorite(int User_ID, int Msg_Index) {
+	return false;
 
 }
 bool UserAccount::RemoveOldestFavorite(int User_ID) {
+	return false;
 
 }
 void UserAccount::ViewFavorites() {
 
 }
 int UserAccount::GetMessagesFromUser(UserAccount* user) {
+	return 0;
 
 }
 UserAccount* UserAccount::GetContact(int User_ID) {
-
+	return NULL;
 }
