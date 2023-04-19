@@ -1,12 +1,9 @@
-﻿  UserAccount.cpp
-E:\DS\Saraha\UserAccount.cpp(55,50): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-  main.cpp
-E:\DS\Saraha\main.cpp(23,29): warning C4838: conversion from 'time_t' to 'WORD' requires a narrowing conversion
-E:\DS\Saraha\main.cpp(23,29): warning C4244: 'initializing': conversion from 'time_t' to 'WORD', possible loss of data
-E:\DS\Saraha\main.cpp(24,30): warning C4838: conversion from 'time_t' to 'WORD' requires a narrowing conversion
-E:\DS\Saraha\main.cpp(24,30): warning C4244: 'initializing': conversion from 'time_t' to 'WORD', possible loss of data
-E:\DS\Saraha\main.cpp(25,30): warning C4838: conversion from 'time_t' to 'WORD' requires a narrowing conversion
-E:\DS\Saraha\main.cpp(25,30): warning C4244: 'initializing': conversion from 'time_t' to 'WORD', possible loss of data
-E:\DS\Saraha\main.cpp(44,43): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-  Generating Code...
-  Saraha.vcxproj -> E:\DS\Saraha\x64\Debug\Saraha.exe
+﻿  main.cpp
+D:\Project DataStructure 2023\Saraha\main.cpp(23,29): warning C4838: conversion from 'time_t' to 'WORD' requires a narrowing conversion
+D:\Project DataStructure 2023\Saraha\main.cpp(23,29): warning C4244: 'initializing': conversion from 'time_t' to 'WORD', possible loss of data
+D:\Project DataStructure 2023\Saraha\main.cpp(24,30): warning C4838: conversion from 'time_t' to 'WORD' requires a narrowing conversion
+D:\Project DataStructure 2023\Saraha\main.cpp(24,30): warning C4244: 'initializing': conversion from 'time_t' to 'WORD', possible loss of data
+D:\Project DataStructure 2023\Saraha\main.cpp(25,30): warning C4838: conversion from 'time_t' to 'WORD' requires a narrowing conversion
+D:\Project DataStructure 2023\Saraha\main.cpp(25,30): warning C4244: 'initializing': conversion from 'time_t' to 'WORD', possible loss of data
+D:\Project DataStructure 2023\Saraha\main.cpp(89,14): warning C4129: 'A': unrecognized character escape sequence
+  Saraha.vcxproj -> D:\Project DataStructure 2023\Saraha\x64\Debug\Saraha.exe
