@@ -3,14 +3,7 @@
 
 #include <fstream>
 #include <sstream>
-string ToLower(string s) 
-{	
-	for (auto& i : s)
-	{
-		i = tolower(i);
-	}
-	return s;
-}
+
 Config::Config(const char* filename) : m_loaded(false), m_file(filename), m_nextaccountid(1)
 {
 }
@@ -251,6 +244,15 @@ void Config::WriteFavoriteMessages(UserAccount& acc, int idx, IniFile& cfg)
 		favorites.pop();
 		++i;
 	}
+}
+
+string ToLower(string s)
+{
+	for (auto& i : s)
+	{
+		i = tolower(i);
+	}
+	return s;
 }
 
 UserAccount* Config::AccountExists(string username)

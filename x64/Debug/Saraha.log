@@ -1,9 +1,0 @@
-﻿  main.cpp
-E:\DS\Saraha\Saraha\main.cpp(23,29): warning C4838: conversion from 'time_t' to 'WORD' requires a narrowing conversion
-E:\DS\Saraha\Saraha\main.cpp(23,29): warning C4244: 'initializing': conversion from 'time_t' to 'WORD', possible loss of data
-E:\DS\Saraha\Saraha\main.cpp(24,30): warning C4838: conversion from 'time_t' to 'WORD' requires a narrowing conversion
-E:\DS\Saraha\Saraha\main.cpp(24,30): warning C4244: 'initializing': conversion from 'time_t' to 'WORD', possible loss of data
-E:\DS\Saraha\Saraha\main.cpp(25,30): warning C4838: conversion from 'time_t' to 'WORD' requires a narrowing conversion
-E:\DS\Saraha\Saraha\main.cpp(25,30): warning C4244: 'initializing': conversion from 'time_t' to 'WORD', possible loss of data
-E:\DS\Saraha\Saraha\main.cpp(89,14): warning C4129: 'A': unrecognized character escape sequence
-  Saraha.vcxproj -> E:\DS\Saraha\Saraha\x64\Debug\Saraha.exe
