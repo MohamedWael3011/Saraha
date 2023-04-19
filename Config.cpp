@@ -3,7 +3,14 @@
 
 #include <fstream>
 #include <sstream>
-
+string ToLower(string s) 
+{	
+	for (auto& i : s)
+	{
+		i = tolower(i);
+	}
+	return s;
+}
 Config::Config(const char* filename) : m_loaded(false), m_file(filename), m_nextaccountid(1)
 {
 }
@@ -246,21 +253,26 @@ void Config::WriteFavoriteMessages(UserAccount& acc, int idx, IniFile& cfg)
 	}
 }
 
-UserAccount* Config::AccountExists(const string& username)
-{
+UserAccount* Config::AccountExists(string username)
+{	
+	username = ToLower(username);
 	for (auto it = UserAccounts.begin(); it != UserAccounts.end(); ++it)
 	{
-		if (it->second.Username().compare(username) == 0)
+		string tmp = ToLower(it->second.Username());
+		if (tmp.compare(username) == 0)
 			return &it->second;
 	}
 	return NULL;
 }
 
-UserAccount* Config::AccountExists(const string& username, const string& pw)
+UserAccount* Config::AccountExists(string username, const string& pw)
 {
+	username = ToLower(username);
+
 	for (auto it = UserAccounts.begin(); it != UserAccounts.end(); ++it)
 	{
-		if (it->second.Username().compare(username) == 0 && it->second.Password().compare(pw) == 0)
+		string tmp = ToLower(it->second.Username());
+		if (tmp.compare(username) == 0 && it->second.Password().compare(pw) == 0)
 			return &it->second;
 	}
 	return NULL;

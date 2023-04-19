@@ -35,8 +35,8 @@ private:
 	void WriteFavoriteMessages(UserAccount& acc, int idx, IniFile& cfg);
 
 public:
-	UserAccount* AccountExists(const string& username);
-	UserAccount* AccountExists(const string& username, const string& pw);
+	UserAccount* AccountExists(string username);
+	UserAccount* AccountExists(string username, const string& pw);
 
 	UserAccount* GetUserAccount(int id);
 	int PopNextAccountID();

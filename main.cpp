@@ -71,7 +71,7 @@ int main()
 	{ 
 		system("cls");
 		cout << "----------------- Welcome to Saraha -----------------\n";
-		cout << "1. REGISTER\n2. LOGIN\n3. EXIST\n\nPlease choose an option: ";
+		cout << "1. REGISTER\n2. LOGIN\n3. EXIT\n\nPlease choose an option: ";
 		cin >> choice;
 
 		switch (choice)
