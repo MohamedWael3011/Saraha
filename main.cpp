@@ -35,7 +35,7 @@ void TestingViewContact()
 
 bool Register(string Username, string Password)
 {
-	if (cfg.AccountExists(Username,Password) == NULL)
+	if (cfg.AccountExists(Username) == NULL)
 	{
 		int new_id = cfg.PopNextAccountID();
 		UserAccount new_acc(new_id, Username, Password);
