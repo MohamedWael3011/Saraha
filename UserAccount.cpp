@@ -69,7 +69,8 @@ void UserAccount::ViewContacts() {
 void UserAccount::ViewMessages() {
 
 }
-void UserAccount::ViewMessages(int User_ID) {
+bool UserAccount::ViewMessages(int User_ID) {
+	return false;
 
 }
 bool UserAccount::PutFavorite(int User_ID, int Msg_Index) {

@@ -24,7 +24,7 @@ public:
 	bool PopMessage(int User_ID);
 	void ViewContacts(); //ordered by most messages
 	void ViewMessages();
-	void ViewMessages(int User_ID);
+	bool ViewMessages(int User_ID);
 	bool PutFavorite(int User_ID, int Msg_Index);
 	bool RemoveOldestFavorite(int User_ID);
 	void ViewFavorites();
