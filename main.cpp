@@ -235,8 +235,21 @@ void MessageScreen()
 		cout << "Please enter the user ID to pop last message you sent him/her\n";
 		int ID;
 		cin >> ID;
+		UserAccount* receiver = cfg.GetUserAccount(ID);
+		if (receiver != NULL)
+		{
+			bool result = receiver->PopMessage(current_user->ID());
+			if (result) {
+				cout << "Message has been popped.\n";
+			}
+			else {
+				cout << "No messages to delete.\n";
 
-		current_user->PopMessage(ID);
+			}
+		}
+		else
+			cout << "User was not found.\n";
+
 		break;
 	}
 

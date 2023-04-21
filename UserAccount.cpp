@@ -69,9 +69,18 @@ void UserAccount::ReceiveMessage(int Sender_ID, string content)
 	}
 }
 
-bool UserAccount::PopMessage(int User_ID)
-{
-	return false;
+bool UserAccount::PopMessage(int User_ID) {
+
+	auto it = Messages.find(User_ID);
+	if (it == Messages.end() || it->second.empty()) {
+		
+		return false;
+	}
+	else {
+		it->second.pop();
+		return true;
+	}
+
 }
 
 void UserAccount::ViewContacts() { 
