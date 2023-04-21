@@ -3,3 +3,4 @@
 #include "Config.h"
 
 extern Config cfg;
+extern UserAccount* current_user;

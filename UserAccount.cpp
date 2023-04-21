@@ -38,13 +38,42 @@ bool UserAccount::AddContact(int User_ID) {
 bool UserAccount::RemoveContact(int User_ID) {
 	return false;
 }
-void UserAccount::SendMessage(int User_ID, string content) {
 
+void UserAccount::ReceiveMessage(int Sender_ID, string content)
+{
+	SYSTEMTIME time;
+	GetSystemTime(&time);
+
+	Message msg;
+	msg.Content = content;
+	msg.SentDate = time;
+
+	auto it = Messages.find(Sender_ID);
+
+	// if received msgs from this user before
+	if (it != Messages.end())
+	{
+		msg.Index = (!it->second.empty() ? it->second.top().Index : 0) + 1;
+		it->second.push(msg);
+	}
+
+	// first time to receive msg from this user
+	else
+	{
+		msg.Index = 0;
+
+		stack<Message> msgs;
+		msgs.push(msg);
+
+		Messages[Sender_ID] = msgs;
+	}
 }
-bool UserAccount::PopMessage(int User_ID) {
+
+bool UserAccount::PopMessage(int User_ID)
+{
 	return false;
-
 }
+
 void UserAccount::ViewContacts() { 
 	set<int>::iterator itr;		   	
 	vector<pair<int,int>>ContactTotalMessages;
@@ -67,8 +96,9 @@ void UserAccount::ViewContacts() {
 }
 
 void UserAccount::ViewMessages() {
-
+	
 }
+
 bool UserAccount::ViewMessages(int User_ID) {
 	return false;
 
