@@ -1,11 +1,13 @@
 #include "main.h"
 #include <chrono>
 #include <ctime>
+#include <conio.h>
 
 #define CONFIG_FILE "data.ini"
 
 Config cfg(CONFIG_FILE);
 UserAccount* current_user;
+
 void TestAccountToConfig()
 {
 	UserAccount acc(50, "muhab", "12345666");
@@ -61,102 +63,128 @@ void HomeScreen();
 void MessageScreen();
 void ContactScreen();
 void FavoriteScreen();
+string PasswordCensoring();
+bool PasswordTypoChecker(string pass1,string pass2);
+
 int main()
 {
 	// Load configuration on startup
 	cfg.Load();
 
-	//--------------------------------------------------------------------------
-	/*
-	Karim: This next section is me testing how the program would run on console
-	You can comment it if you don't like it or you wanna modify stuff	
-	*/
-
-
 	
-	//--------------------------------------------------------------------------
-
-	// Save configuration on exit (not finished yet)
 	//TestingViewContact();
 	LoginRegisterMenu();
+	
+
+	// Save configuration on exit (not finished yet)
 	cfg.Save();
 	return 0;
 }
 
-
+string PasswordCensoring()
+{
+	string passw = "";
+	char ch;
+	ch = _getch();
+	while (ch != 13) //Equivalent of Pressing "Enter"
+	{
+		if (ch != 8) //Equivalent of Pressing "Backspace"
+		{
+			passw.push_back(ch);
+			cout << "*";
+		}
+		else
+		{
+			if (!passw.empty())
+			{
+				passw.pop_back();
+				cout << "\b" << " " << "\b";
+			}
+		}
+		ch = _getch();
+	}
+	return passw;
+}
+bool PasswordTypoChecker(string pass1, string pass2) {
+	if (pass1.compare(pass2) == 0)
+		return true;
+	else
+		return false;
+}
 void LoginRegisterMenu()
 {
 	system("cls");
 	cout << "----------------- Welcome to Saraha -----------------\n";
 	cout << "1. REGISTER\n2. LOGIN\n3. EXIT\n\nPlease choose an option: ";
-	int choice;
+	char choice;
 	cin >> choice;
-	string username, password;
+	string username, password, password_check;
 	switch (choice)
 	{
-	case 1:
+	case '1':
 	{
 		system("cls");
+
 		cout << "Enter Username: ";
 		cin >> username;
 		cout << "Enter Password: ";
-		cin >> password;
-		char confirm;
-		cout << "Are you sure you want to register an account with username " << username << " and password " << password << " > y/n\n";
-		cin >> confirm;
-		if (tolower(confirm) == 'n')
+		password = PasswordCensoring();
+		cout << "\nRe-enter your password: ";
+		password_check = PasswordCensoring();
+		
+		if (!PasswordTypoChecker(password,password_check))
 		{
+			cout << "\n\nError: Passwords do not match\n";
+			system("pause");
 			LoginRegisterMenu();
 		}
 		else 
 		{
 			if (Register(username, password))
 			{
-				cout << "\Account Created\n";
-				cout << "\Please login.\n";
+				cout << "\n\nAccount Created\n";
+				cout << "Please login.\n";
 				system("pause");
-			}
+				LoginRegisterMenu();
+;			}
 			else
 			{
-				cout << "Error: Account already exists\n";
+				cout << "\n\nError: Account already exists\n";
 				system("pause");
 				LoginRegisterMenu();
 			}
 		}
-
-
 		break;
 	}
-	case 2:
+	case '2':
 	{
 		system("cls");
 		cout << "Enter Username: ";
 		cin >> username;
-		cout << "Enter Password: ";
-		cin >> password;
+		cout << "Enter password: ";
+		password = PasswordCensoring();
 
 		if (Login(username, password) == NULL)
 		{
-			cout << "Invalid credentials, please try again. \n";
+			cout << "\nInvalid credentials, please try again. \n";
 			system("pause");
 			LoginRegisterMenu();
 		}
 		else
 		{
 			current_user = Login(username, password);
-			cout << "Login Successful\n";
-			HomeScreen();
+			cout << "\n\nLogin Successful\n";
 			system("pause");
+			HomeScreen();
 		}
 		break;
 	}
-	case 3:
+	case '3':
 		return;
 	default:
-		cout << "Please enter a valid choice\n";
+		cout << "\n\nError: Please enter a valid choice\n";
 		system("pause");
 		LoginRegisterMenu();
-
 	}
 }
 
