@@ -1,5 +1,9 @@
 #include "UserAccount.h"
 
+void PrintDate(SYSTEMTIME d)
+{
+	cout << d.wDay << "-" << d.wMonth << "-" << d.wYear << " " << d.wHour << ":" << d.wMinute << endl;
+}
 UserAccount::UserAccount(void)
 {
 }
@@ -109,7 +113,24 @@ void UserAccount::ViewMessages() {
 }
 
 bool UserAccount::ViewMessages(int User_ID) {
-	return false;
+	stack <Message> temp1;
+
+	if (Messages.find(User_ID) == Messages.end())
+	{
+		return false;
+	}
+	else
+	{
+		temp1 = Messages[User_ID];
+		while (!temp1.empty())
+		{
+
+			cout << temp1.top().Index << "| " << temp1.top().Content<<"  ";
+			PrintDate(temp1.top().SentDate);
+			temp1.pop();
+		}
+		return true;
+	}
 
 }
 bool UserAccount::PutFavorite(int User_ID, int Msg_Index) {

@@ -208,21 +208,21 @@ void HomeScreen()
 {	
 	ClearConsole();
 	cout << "1. View messages.\n2. View contacts.\n3. View favorite messages.\n4. Logout.\nPlease select a choice\n";
-	int choice;
+	char choice;
 	cin >> choice;
 	switch (choice)
 	{
-	case 1:
+	case '1':
 		MessageScreen();
 		break;
-	case 2:
+	case '2':
 		ContactScreen();
 		break;
 
-	case 3:
+	case '3':
 		FavoriteScreen();
 		break;
-	case 4:
+	case '4':
 		LoginRegisterMenu();
 		break;
 	default:
@@ -235,12 +235,12 @@ void MessageScreen()
 {	
 	ClearConsole();
 	cout << "1. Send a message.\n2. Pop last message.\n3. View all messages.\n4. View messages from a specific user.\n5. Return home screen.\n";
-	int choice;
+	char choice;
 	cin >> choice;
 
 	switch (choice)
 	{
-	case 1:
+	case '1':
 	{
 		cout << "Please enter the user ID to send him/her a message\n";
 		int ID;
@@ -258,10 +258,12 @@ void MessageScreen()
 		}
 		else
 			cout << "User was not found.\n";
+		system("pause");
+		MessageScreen();
 		break;
 	}
 
-	case 2:
+	case '2':
 	{
 		cout << "Please enter the user ID to pop last message you sent him/her\n";
 		int ID;
@@ -280,27 +282,30 @@ void MessageScreen()
 		}
 		else
 			cout << "User was not found.\n";
-
+		system("pause");
+		MessageScreen();
 		break;
 	}
 
-	case 3:
+	case '3':
 		cout << "Here is your inbox from most recent to oldest:\n";
 		current_user->ViewMessages();
 		//Add Adding to Favorite Logic
 		break;
 
-	case 4:
+	case '4':
 	{
 		cout << "Please enter the user ID to display their messages\n";
 		int ID;
 		cin >> ID;
 		current_user->ViewMessages(ID);
 		//Add Adding to Favorite Logic
+		system("pause");
+		MessageScreen();
 		break;
 	}
 
-	case 5:
+	case '5':
 		HomeScreen();
 		break;
 
