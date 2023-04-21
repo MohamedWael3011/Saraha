@@ -30,7 +30,7 @@ public:
 	bool RemoveOldestFavorite(int User_ID);
 	void ViewFavorites();
 	int GetMessagesFromUser(UserAccount* user);
-	UserAccount* GetContact(int User_ID);
+	bool GetContact(int User_ID);
 	int ID() const;
 	string Username() const;
 	string Password() const;

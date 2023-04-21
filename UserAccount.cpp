@@ -127,6 +127,10 @@ int UserAccount::GetMessagesFromUser(UserAccount* user) {
 	return 0;
 
 }
-UserAccount* UserAccount::GetContact(int User_ID) {
+bool UserAccount::GetContact(int User_ID) {
+	auto it = Contacts.find(User_ID);
+	if (it != Contacts.end()) {
+		return true;
+	}
 	return NULL;
 }
