@@ -130,13 +130,37 @@ void LoginRegisterMenu()
 	ClearConsole();
 
 	cout << "----------------- Welcome to Saraha -----------------\n";
-	cout << "1. REGISTER\n2. LOGIN\n3. EXIT\n\nPlease choose an option: ";
+	cout << "1. LOGIN\n2. REGISTER\n3. EXIT\n\nPlease choose an option: ";
 	char choice;
 	cin >> choice;
 	string username, password, password_check;
 	switch (choice)
 	{
 	case '1':
+	{
+		ClearConsole();
+		cout << "Enter Username: ";
+		cin >> username;
+		cout << "Enter password: ";
+		password = PasswordCensoring();
+
+		if (Login(username, password) == NULL)
+		{
+			cout << "\n\nError: Invalid credentials, please try again. \n";
+			SystemPause();
+			LoginRegisterMenu();
+		}
+		else
+		{
+			current_user = Login(username, password);
+			cout << "\n\nLogin Successful\n";
+			SystemPause();
+			HomeScreen();
+		}
+		break;
+	}
+
+	case '2':
 	{
 		ClearConsole();
 
@@ -172,31 +196,10 @@ void LoginRegisterMenu()
 		}
 		break;
 	}
-	case '2':
-	{
-		ClearConsole();
-		cout << "Enter Username: ";
-		cin >> username;
-		cout << "Enter password: ";
-		password = PasswordCensoring();
 
-		if (Login(username, password) == NULL)
-		{
-			cout << "\n\nError: Invalid credentials, please try again. \n";
-			SystemPause();
-			LoginRegisterMenu();
-		}
-		else
-		{
-			current_user = Login(username, password);
-			cout << "\n\nLogin Successful\n";
-			SystemPause();
-			HomeScreen();
-		}
-		break;
-	}
 	case '3':
 		return;
+
 	default:
 		cout << "\n\nError: Please enter a valid choice\n";
 		SystemPause();
@@ -207,7 +210,7 @@ void LoginRegisterMenu()
 void HomeScreen()
 {	
 	ClearConsole();
-	cout << "1. View messages.\n2. View contacts.\n3. View favorite messages.\n4. Logout.\nPlease select a choice\n";
+	cout << "1. View messages.\n2. View contacts.\n3. View favorite messages.\n4. Logout\n5. Exit.\n\nPlease select a choice: ";
 	char choice;
 	cin >> choice;
 	switch (choice)
@@ -225,6 +228,8 @@ void HomeScreen()
 	case '4':
 		LoginRegisterMenu();
 		break;
+	case '5':
+		return;
 	default:
 		cout << "Please enter a valid choice\n";
 		SystemPause();
@@ -247,8 +252,9 @@ void MessageScreen()
 		cin >> ID;
 
 		cout << "Please enter the message you'd like to send\n";
+		cin.ignore();
 		string msg;
-		cin >> msg;
+		getline(cin, msg, '\n');
 
 		UserAccount* receiver = cfg.GetUserAccount(ID);
 		if (receiver != NULL)

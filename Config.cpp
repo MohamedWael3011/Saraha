@@ -3,14 +3,7 @@
 
 #include <fstream>
 #include <sstream>
-string ToLower(string s) 
-{	
-	for (auto& i : s)
-	{
-		i = tolower(i);
-	}
-	return s;
-}
+
 Config::Config(const char* filename) : m_loaded(false), m_file(filename), m_nextaccountid(1)
 {
 }
@@ -47,8 +40,8 @@ bool Config::Save(void)
 	{
 		// Load ini file
 		IniFile cfg(false);
-		if (!GetConfigFile(cfg))
-			return false;
+		//if (!GetConfigFile(cfg))
+			//return false;
 
 		// Save new config
 		WriteAccounts(cfg);
@@ -88,8 +81,11 @@ bool Config::SaveConfigFile(IniFile& ini)
 		if (const char* data = ini.Data())
 		{
 			cfg.write(data, strlen(data));
+			cfg.close();
 			return true;
 		}
+
+		cfg.close();
 	}
 	return false;
 }
@@ -174,11 +170,14 @@ void Config::LoadFavoriteMessages(UserAccount& acc, int idx, IniFile& cfg)
 
 void Config::WriteAccounts(IniFile& cfg)
 {
+	cfg.WriteComment("Number of accounts registered.");
 	cfg.WriteKeyInt("Accounts_Count", UserAccounts.size());
 
 	int i = 1;
 	for (auto it = UserAccounts.begin(); it != UserAccounts.end(); ++it, ++i)
 	{
+		cfg.WriteLineBreak();
+
 		// write account data
 		cfg.WriteKeyInt("Account_ID_" + to_string(i), it->first);
 		cfg.WriteKey("Account_Username_" + to_string(i), it->second.Username());
@@ -201,15 +200,18 @@ void Config::WriteContacts(UserAccount& acc, int idx, IniFile& cfg)
 
 void Config::WriteMessages(UserAccount& acc, int idx, IniFile& cfg)
 {
-	size_t size = 0;
-	int i = 1;
+	size_t size = 0, msgcnt;
+	int i;
 	Message msg;
 	stack<Message> msgs;
 
 	for (auto it = acc.Messages.begin(); it != acc.Messages.end(); ++it)
 	{
 		msgs = it->second;
-		size += msgs.size();
+		msgcnt = msgs.size();
+
+		size += msgcnt;
+		i = size;
 
 		while (!msgs.empty())
 		{
@@ -223,7 +225,7 @@ void Config::WriteMessages(UserAccount& acc, int idx, IniFile& cfg)
 			cfg.WriteKeyInt("Account_Message_Favorite_" + to_string(idx) + '_' + to_string(i), msg.IsFavorite);
 
 			msgs.pop();
-			++i;
+			--i;
 		}
 	}
 
@@ -253,13 +255,21 @@ void Config::WriteFavoriteMessages(UserAccount& acc, int idx, IniFile& cfg)
 	}
 }
 
+string ToLower(string s)
+{
+	for (auto& i : s)
+	{
+		i = tolower(i);
+	}
+	return s;
+}
+
 UserAccount* Config::AccountExists(string username)
 {	
 	username = ToLower(username);
 	for (auto it = UserAccounts.begin(); it != UserAccounts.end(); ++it)
 	{
-		string tmp = ToLower(it->second.Username());
-		if (tmp.compare(username) == 0)
+		if (ToLower(it->second.Username()).compare(username) == 0)
 			return &it->second;
 	}
 	return NULL;
@@ -268,11 +278,9 @@ UserAccount* Config::AccountExists(string username)
 UserAccount* Config::AccountExists(string username, const string& pw)
 {
 	username = ToLower(username);
-
 	for (auto it = UserAccounts.begin(); it != UserAccounts.end(); ++it)
 	{
-		string tmp = ToLower(it->second.Username());
-		if (tmp.compare(username) == 0 && it->second.Password().compare(pw) == 0)
+		if (ToLower(it->second.Username()).compare(username) == 0 && it->second.Password().compare(pw) == 0)
 			return &it->second;
 	}
 	return NULL;

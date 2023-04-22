@@ -2,6 +2,7 @@
 
 #define KEY_DELIMITER   '\n'
 #define VALUE_DELIMITER '='
+#define COMMENT_PREFIX  "#"
 
 IniFile::IniFile(bool read, string str) : m_read(read), m_data(str)
 {
@@ -45,7 +46,17 @@ int IniFile::ReadKeyInt(string key)
 	return atoi(ReadKey(key).c_str());
 }
 
-bool IniFile::WriteKey(string key, string value)
+bool IniFile::WriteComment(string comment)
+{
+	if (!m_read)
+	{
+		m_data += COMMENT_PREFIX " " + comment + KEY_DELIMITER;
+		return true;
+	}
+	return false;
+}
+
+bool IniFile::WriteKey(string key, string value, bool newline)
 {
 	if (!m_read)
 	{
@@ -64,15 +75,27 @@ bool IniFile::WriteKey(string key, string value)
 			return true;
 		}
 
-		m_data += KEY_DELIMITER + key + value;
+		m_data += key + value + KEY_DELIMITER;
+		if (newline)
+			WriteLineBreak();
 		return true;
 	}
 	return false;
 }
 
-bool IniFile::WriteKeyInt(string key, int value)
+bool IniFile::WriteKeyInt(string key, int value, bool newline)
 {
-	return WriteKey(key, to_string(value));
+	return WriteKey(key, to_string(value), newline);
+}
+
+bool IniFile::WriteLineBreak(void)
+{
+	if (!m_read)
+	{
+		m_data.push_back(KEY_DELIMITER);
+		return true;
+	}
+	return false;
 }
 
 const string IniFile::operator[](string key)

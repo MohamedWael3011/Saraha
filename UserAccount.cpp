@@ -47,10 +47,7 @@ void UserAccount::ReceiveMessage(int Sender_ID, string content)
 {
 	SYSTEMTIME time;
 	GetSystemTime(&time);
-
-	Message msg;
-	msg.Content = content;
-	msg.SentDate = time;
+	Message msg{ 0, content, time };
 
 	auto it = Messages.find(Sender_ID);
 
@@ -64,8 +61,6 @@ void UserAccount::ReceiveMessage(int Sender_ID, string content)
 	// first time to receive msg from this user
 	else
 	{
-		msg.Index = 0;
-
 		stack<Message> msgs;
 		msgs.push(msg);
 
