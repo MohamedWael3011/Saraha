@@ -304,7 +304,14 @@ void MessageScreen()
 		cout << "Please enter the user ID to display their messages\n";
 		int ID;
 		cin >> ID;
-		current_user->ViewMessages(ID);
+		if (current_user->ViewMessages(ID))
+		{
+			cout << "------------------------------------" << endl;
+		}
+		else
+		{
+			cout << "No messages are found" << endl;
+		}
 		//Add Adding to Favorite Logic
 		system("pause");
 		MessageScreen();

@@ -140,7 +140,7 @@ void UserAccount::ViewFavorites() {
 
 }
 int UserAccount::GetMessagesFromUser(UserAccount* user) {
-	return 0;
+	return Messages[user->m_id].size();
 
 }
 bool UserAccount::GetContact(int User_ID) {
