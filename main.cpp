@@ -26,6 +26,26 @@ void TestingViewContact()
 	acc.ViewContacts();
 }
 
+void TestingFavorites()
+{
+	if (current_user)
+	{
+		cout << "Saving favorites..\n";
+
+		SYSTEMTIME time;
+
+		GetSystemTime(&time);
+		current_user->Favorites.push(pair<int, Message>(3, Message{ 1, "uwuuu", time, true }));
+
+		Sleep(5 * 1000);
+		GetSystemTime(&time);
+		current_user->Favorites.push(pair<int, Message>(3, Message{ 2, "adeni gram m7ba", time, true }));
+
+		cfg.Save();
+		cout << "Finished saving favorites.\n";
+	}
+}
+
 // Main functions
 bool Register(string Username, string Password);
 UserAccount* Login(string Username, string Password);
@@ -45,7 +65,6 @@ int main()
 {
 	// Load configuration on startup
 	cfg.Load();
-
 
 	// Save configuration on exit (not finished yet)
 	LoginRegisterMenu();
@@ -221,7 +240,6 @@ void HomeScreen()
 	case '2':
 		ContactScreen();
 		break;
-
 	case '3':
 		FavoriteScreen();
 		break;
@@ -351,6 +369,47 @@ void ContactScreen()
 		}
 	}
 }
-void FavoriteScreen() {
 
+void FavoriteScreen()
+{
+	ClearConsole();
+	cout << "1. View all favorite messages.\n2. Return home screen.\n\nYour choice: ";
+
+	char choice;
+	cin >> choice;
+
+	cout << "\n";
+
+	switch (choice)
+	{
+	case '1':
+	{
+		if (current_user)
+		{
+			if (!current_user->ViewFavorites())
+			{
+				SystemPause();
+				HomeScreen();
+			}
+		}
+		else
+		{
+			cout << "Please log in first to view your favorite messages.";
+			SystemPause();
+			LoginRegisterMenu();
+		}
+		break;
+	}
+
+	case '2':
+	{
+		HomeScreen();
+		break;
+	}
+
+	default:
+		cout << "Please enter a valid choice\n";
+		SystemPause();
+		FavoriteScreen();
+	}
 }

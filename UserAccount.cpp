@@ -1,4 +1,5 @@
 #include "UserAccount.h"
+#include "Misc.h"
 
 void PrintDate(SYSTEMTIME d)
 {
@@ -136,9 +137,34 @@ bool UserAccount::RemoveOldestFavorite(int User_ID) {
 	return false;
 
 }
-void UserAccount::ViewFavorites() {
 
+bool UserAccount::ViewFavorites(void)
+{
+	if (Favorites.empty())
+	{
+		cout << "No favorite messages to display.\n";
+		return false;
+	}
+
+	queue<pair<int, Message>> msgs = Favorites;
+	pair<int, Message> msg;
+
+	cout << "\n\n>>>>>>>>>> YOUR FAVORITE MESSEAGES <<<<<<<<<<\n\n";
+
+	while (!msgs.empty())
+	{
+		msg = msgs.front();
+
+		cout << "[" << DATE2STR(msg.second.SentDate) << "] "
+			<< to_string(msg.first)
+			<< (GetContact(msg.first) ? " (contact): " : ": ")
+			<< msg.second.Content << '\n';
+
+		msgs.pop();
+	}
+	return true;
 }
+
 int UserAccount::GetMessagesFromUser(UserAccount* user) {
 	return Messages[user->m_id].size();
 

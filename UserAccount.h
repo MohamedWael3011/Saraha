@@ -28,7 +28,7 @@ public:
 	bool ViewMessages(int User_ID);
 	bool PutFavorite(int User_ID, int Msg_Index);
 	bool RemoveOldestFavorite(int User_ID);
-	void ViewFavorites();
+	bool ViewFavorites();
 	int GetMessagesFromUser(UserAccount* user);
 	bool GetContact(int User_ID);
 	int ID() const;

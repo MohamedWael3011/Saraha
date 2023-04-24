@@ -47,3 +47,20 @@ SYSTEMTIME StringToDate(string str)
 
 	return time;
 }
+
+string GetMessageDate(SYSTEMTIME& date)
+{
+	char buffer[30];
+	sprintf_s(buffer, "%02d/%d/%d %02d:%02d:%02d", date.wDay, date.wMonth, date.wYear, date.wHour, date.wMinute, date.wSecond);
+	return buffer;
+}
+
+unsigned long long DateToULL(SYSTEMTIME& date)
+{
+	return date.wSecond
+		+ (date.wMinute * 60)
+		+ (date.wHour * 60 * 60)
+		+ (date.wDay * 60 * 60 * 24)
+		+ (date.wMonth * 60 * 60 * 24 * 30)
+		+ ((double)date.wYear * 60 * 60 * 24 * 30 * 365.25);
+}
