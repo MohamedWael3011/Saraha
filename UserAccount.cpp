@@ -5,6 +5,12 @@ void PrintDate(SYSTEMTIME d)
 {
 	cout << d.wDay << "-" << d.wMonth << "-" << d.wYear << " " << d.wHour << ":" << d.wMinute << endl;
 }
+bool compareByTime(const pair<Message, int>& a, const pair<Message, int>& b) {
+	FILETIME aFileTime, bFileTime;
+	SystemTimeToFileTime(&a.first.SentDate, &aFileTime);
+	SystemTimeToFileTime(&b.first.SentDate, &bFileTime);
+	return CompareFileTime(&aFileTime, &bFileTime) < 0;
+}
 UserAccount::UserAccount(void)
 {
 }
@@ -105,11 +111,36 @@ void UserAccount::ViewContacts() {
 }
 
 void UserAccount::ViewMessages() {
-	
-}
+	if (Messages.empty() == true)
+	{
+		cout << "No messages to be displayed" << endl;
+	}
+	else
+	{
+		vector <pair<Message, int>> AllMessages;
+		stack <Message> UserMessages;
+		unordered_map<int, stack<Message>>::iterator it;
 
+		for (it = Messages.begin(); it != Messages.end(); it++)
+		{
+			UserMessages = it->second;
+			while (!UserMessages.empty())
+			{
+				AllMessages.emplace_back(UserMessages.top(), it->first);
+				UserMessages.pop();
+			}
+		}
+		std::sort(AllMessages.begin(), AllMessages.end(), compareByTime);
+
+		for (int i = 0; i < AllMessages.size(); i++)
+		{
+			cout << AllMessages[i].first.Index << "| User ID: " << AllMessages[i].second << "| " << AllMessages[i].first.Content << "  ";
+			PrintDate(AllMessages[i].first.SentDate);
+		}
+	}
+}
 bool UserAccount::ViewMessages(int User_ID) {
-	stack <Message> temp1;
+	stack <Message> UserMessages;
 
 	if (Messages.find(User_ID) == Messages.end())
 	{
@@ -117,13 +148,13 @@ bool UserAccount::ViewMessages(int User_ID) {
 	}
 	else
 	{
-		temp1 = Messages[User_ID];
-		while (!temp1.empty())
+		UserMessages = Messages[User_ID];
+		while (!UserMessages.empty())
 		{
 
-			cout << temp1.top().Index << "| " << temp1.top().Content<<"  ";
-			PrintDate(temp1.top().SentDate);
-			temp1.pop();
+			cout << UserMessages.top().Index << "| " << UserMessages.top().Content<<"  ";
+			PrintDate(UserMessages.top().SentDate);
+			UserMessages.pop();
 		}
 		return true;
 	}
