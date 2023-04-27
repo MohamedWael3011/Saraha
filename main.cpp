@@ -52,8 +52,9 @@ UserAccount* Login(string Username, string Password);
 void LoginRegisterMenu();
 void HomeScreen();
 void MessageScreen();
-void ContactScreen();
 void FavoriteScreen();
+void ViewMessageFromContactScreen();
+void ContactScreen();
 string PasswordCensoring();
 bool PasswordTypoChecker(string pass1, string pass2);
 void OnExit();
@@ -149,7 +150,7 @@ void LoginRegisterMenu()
 	ClearConsole();
 
 	cout << "----------------- Welcome to Saraha -----------------\n";
-	cout << "1. LOGIN\n2. REGISTER\n3. EXIT\n\nPlease choose an option: ";
+	cout << "1. LOGIN\n2. REGISTER\n3. EXIT\n\nYour choice: ";
 	char choice;
 	cin >> choice;
 	string username, password, password_check;
@@ -229,7 +230,7 @@ void LoginRegisterMenu()
 void HomeScreen()
 {	
 	ClearConsole();
-	cout << "1. View messages.\n2. View contacts.\n3. View favorite messages.\n4. Logout\n5. Exit.\n\nPlease select a choice: ";
+	cout << "1. View messages.\n2. View contacts.\n3. View favorite messages.\n4. Logout\n5. Exit.\n\nYour choice: ";
 	char choice;
 	cin >> choice;
 	switch (choice)
@@ -257,7 +258,7 @@ void HomeScreen()
 void MessageScreen() 
 {	
 	ClearConsole();
-	cout << "1. Send a message.\n2. Pop last message.\n3. View all messages.\n4. View messages from a specific user.\n5. Return home screen.\n";
+	cout << "1. Send a message.\n2. Pop last message.\n3. View all messages.\n4. View messages from a specific user.\n5. View contacts.\n6. Return home screen.\n\nYour choice: ";
 	char choice;
 	cin >> choice;
 
@@ -315,6 +316,8 @@ void MessageScreen()
 		cout << "Here is your inbox from most recent to oldest:\n";
 		current_user->ViewMessages();
 		//Add Adding to Favorite Logic
+		system("pause");
+		MessageScreen();
 		break;
 
 	case '4':
@@ -335,8 +338,10 @@ void MessageScreen()
 		MessageScreen();
 		break;
 	}
-
 	case '5':
+		ContactScreen();
+		break;
+	case '6':
 		HomeScreen();
 		break;
 
@@ -347,12 +352,12 @@ void MessageScreen()
 	}
 }
 
-void ContactScreen()
+void ViewMessageFromContactScreen()
 {	
 	ClearConsole();
 	current_user->ViewContacts();
 	cout << "------------------------------------------------------\n\n";
-	cout << "Enter User ID to view their messages.\nTo return home, press 0\n";
+	cout << "Enter User ID to view their messages.\nTo return home, press 0\n\nYour choice: ";
 	int ID;
 	cin >> ID;
 	if (!ID)
@@ -365,7 +370,7 @@ void ContactScreen()
 		else {
 			cout << "Invalid user ID. Please, try again.\n";
 			SystemPause();
-			ContactScreen();
+			ViewMessageFromContactScreen();
 		}
 	}
 }
@@ -408,8 +413,46 @@ void FavoriteScreen()
 	}
 
 	default:
-		cout << "Please enter a valid choice\n";
+		cout << "Please enter a valid choice.\n";
 		SystemPause();
 		FavoriteScreen();
 	}
+}
+
+void ContactScreen()
+{
+	ClearConsole();
+	current_user->ViewContacts();
+	cout << "------------------------------------------------------\n\n";
+	cout << "1. Add new contact\n2. Remove a contact.\n3. Return Home\n\nYour choice: ";
+	char choice;
+	int ID;
+
+	cin >> choice;
+	switch (choice)
+	{
+	case '1':
+		cout << "Please enter the User ID your want to add to your contacts list\n";
+		cin >> ID;
+		current_user->AddContact(ID);
+		SystemPause();
+		ContactScreen();
+		break;
+	case '2':
+		cout << "Please enter the User ID your want to remove from your contacts list\n";
+		cin >> ID;
+		current_user->RemoveContact(ID);
+		SystemPause();
+		ContactScreen();
+		break;
+	case '3':
+		HomeScreen();
+		break;
+
+	default:
+		cout << "Please enter a valid choice.\n";
+		SystemPause();
+		ContactScreen();
+	}
+
 }
