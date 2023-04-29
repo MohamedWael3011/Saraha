@@ -19,8 +19,8 @@ public:
 
 	void Set(int id, string username, string pw);
 
-	void AddContact(int User_ID);
-	void RemoveContact(int User_ID);
+	bool AddContact(int User_ID);
+	bool RemoveContact(int User_ID);
 	void ReceiveMessage(int Sender_ID, string content);
 	bool PopMessage(int User_ID);
 	void ViewContacts(); //ordered by most messages

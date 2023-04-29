@@ -434,14 +434,20 @@ void ContactScreen()
 	case '1':
 		cout << "Please enter the User ID your want to add to your contacts list\n";
 		cin >> ID;
-		current_user->AddContact(ID);
+		if (!current_user->AddContact(ID))
+		{
+			cout << ID << " should send at least one message to be added to the contacts list.\n";
+
+		}
 		SystemPause();
 		ContactScreen();
 		break;
 	case '2':
 		cout << "Please enter the User ID your want to remove from your contacts list\n";
 		cin >> ID;
-		current_user->RemoveContact(ID);
+		if (!current_user->RemoveContact(ID))
+			cout << ID << " isn't on your contacts list.\n";
+
 		SystemPause();
 		ContactScreen();
 		break;

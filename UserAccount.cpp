@@ -42,7 +42,7 @@ string UserAccount::Password(void) const
 	return m_password;
 }
 
-void UserAccount::AddContact(int User_ID) {
+bool UserAccount::AddContact(int User_ID) {
 
 	if (Messages.find(User_ID) != Messages.end()) {
 
@@ -56,25 +56,22 @@ void UserAccount::AddContact(int User_ID) {
 			cout << User_ID << " has been added to your contacts list.\n";
 
 		}
+		return true;
 	}
-	else
-	{
-		cout << User_ID<<" should send at least one message to be added to the contacts list.\n";
-	}
+
+	return false;
 
 }
 
 
-void UserAccount::RemoveContact(int User_ID) {
+bool UserAccount::RemoveContact(int User_ID) {
 
 	if (Contacts.find(User_ID) != Contacts.end()) {
 		Contacts.erase((User_ID));
 		cout << User_ID << " has been removed from your contacts list.\n";
+		return true;
 	}
-	else {
-
-		cout <<User_ID<< " isn't on your contacts list.\n";
-	}
+	return false;
 }
 
 void UserAccount::ReceiveMessage(int Sender_ID, string content)
