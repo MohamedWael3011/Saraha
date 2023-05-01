@@ -142,7 +142,8 @@ void Config::LoadBlocks(UserAccount& acc, int idx, IniFile& cfg)
 void Config::LoadMessages(UserAccount& acc, int idx, IniFile& cfg)
 {
 	// clear
-	acc.Messages.clear();
+	stack<pair<int, Message>>().swap(acc.SentMessages);
+	acc.ReceivedMessages.clear();
 
 	// load
 	Message msg;
@@ -234,41 +235,38 @@ void Config::WriteBlocks(UserAccount& acc, int idx, IniFile& cfg)
 
 void Config::WriteMessages(UserAccount& acc, int idx, IniFile& cfg)
 {
-	size_t sent_size = 0, recv_size = 0, msgcnt;
-	int i;
+	stack<pair<int, Message>> sent = acc.SentMessages;
+	pair<int, Message> sentmsg;
 	Message msg;
-	pair<stack<Message>, stack<Message>> msgs;
+	stack<Message> msgs;
 
-	for (auto it = acc.Messages.begin(); it != acc.Messages.end(); ++it)
+	size_t sent_size = sent.size(), recv_size = 0, msgcnt;
+	int i = sent_size;
+	
+	while (!sent.empty())
+	{
+		sentmsg = sent.top();
+
+		cfg.WriteKeyInt("Account_Sent_Message_Index_" + to_string(idx) + '_' + to_string(i), sentmsg.second.Index);
+		cfg.WriteKey("Account_Sent_Message_Content_" + to_string(idx) + '_' + to_string(i), sentmsg.second.Content);
+		cfg.WriteKey("Account_Sent_Message_Date_" + to_string(idx) + '_' + to_string(i), DateToString(sentmsg.second.SentDate));
+		cfg.WriteKeyInt("Account_Sent_Message_Seen_" + to_string(idx) + '_' + to_string(i), sentmsg.second.Seen);
+
+		sent.pop();
+		--i;
+	}
+
+	for (auto it = acc.ReceivedMessages.begin(); it != acc.ReceivedMessages.end(); ++it)
 	{
 		msgs = it->second;
 
-		msgcnt = msgs.first.size();
-		sent_size += msgcnt;
-		i = sent_size;
-
-		while (!msgs.first.empty())
-		{
-			msg = msgs.first.top();
-
-			//cfg.WriteKeyInt("Account_Sent_Message_Sender_" + to_string(idx) + '_' + to_string(i), it->first);
-
-			cfg.WriteKeyInt("Account_Sent_Message_Index_" + to_string(idx) + '_' + to_string(i), msg.Index);
-			cfg.WriteKey("Account_Sent_Message_Content_" + to_string(idx) + '_' + to_string(i), msg.Content);
-			cfg.WriteKey("Account_Sent_Message_Date_" + to_string(idx) + '_' + to_string(i), DateToString(msg.SentDate));
-			cfg.WriteKeyInt("Account_Sent_Message_Seen_" + to_string(idx) + '_' + to_string(i), msg.Seen);
-
-			msgs.first.pop();
-			--i;
-		}
-
-		msgcnt = msgs.second.size();
+		msgcnt = msgs.size();
 		recv_size += msgcnt;
 		i = recv_size;
 
-		while (!msgs.second.empty())
+		while (!msgs.empty())
 		{
-			msg = msgs.second.top();
+			msg = msgs.top();
 
 			cfg.WriteKeyInt("Account_Received_Message_Sender_" + to_string(idx) + '_' + to_string(i), it->first);
 
@@ -277,7 +275,7 @@ void Config::WriteMessages(UserAccount& acc, int idx, IniFile& cfg)
 			cfg.WriteKey("Account_Received_Message_Date_" + to_string(idx) + '_' + to_string(i), DateToString(msg.SentDate));
 			cfg.WriteKeyInt("Account_Received_Message_Seen_" + to_string(idx) + '_' + to_string(i), msg.Seen);
 
-			msgs.second.pop();
+			msgs.pop();
 			--i;
 		}
 	}
@@ -354,14 +352,19 @@ int Config::PopNextAccountID(void)
 
 void Config::AppendMessage(UserAccount& acc, int senderid, Message& msg, bool sent)
 {
-	auto it = acc.Messages.find(senderid);
-	if (it != acc.Messages.end())
-		(sent ? it->second.first : it->second.second).push(msg);
+	if (sent)
+		acc.SentMessages.push(pair<int, Message>(senderid, msg));
 	else
 	{
-		pair<stack<Message>, stack<Message>> msgs;
-		(sent ? msgs.first : msgs.second).push(msg);
+		auto it = acc.ReceivedMessages.find(senderid);
+		if (it != acc.ReceivedMessages.end())
+			it->second.push(msg);
+		else
+		{
+			stack<Message> msgs;
+			msgs.push(msg);
 
-		acc.Messages[senderid] = msgs;
+			acc.ReceivedMessages[senderid] = msgs;
+		}
 	}
 }

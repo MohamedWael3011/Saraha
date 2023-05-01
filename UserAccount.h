@@ -11,7 +11,8 @@ private:
 public:
 	set<int> Contacts;
 	set<int> Blocked;
-	unordered_map<int, pair<stack<Message>, stack<Message>>> Messages;
+	stack<pair<int, Message>> SentMessages;
+	unordered_map<int, stack<Message>> ReceivedMessages;
 	queue<pair<int, Message>> Favorites;
 
 public:
@@ -32,6 +33,7 @@ public:
 	bool PutFavorite(int User_ID, int Msg_Index);
 	bool RemoveOldestFavorite(int User_ID);
 	bool ViewFavorites();
+
 	int GetMessagesFromUser(UserAccount* user);
 	bool GetContact(int User_ID);
 	int ID() const;
