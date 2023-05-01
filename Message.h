@@ -7,5 +7,7 @@ struct Message
 	string Content;
 	SYSTEMTIME SentDate;
 	bool Seen;
+	bool IsFavorite;
+
 };
 

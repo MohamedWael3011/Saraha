@@ -52,9 +52,9 @@ UserAccount* Login(string Username, string Password);
 void LoginRegisterMenu();
 void HomeScreen();
 void MessageScreen();
-void FavoriteScreen();
 void ViewMessageFromContactScreen();
 void ContactScreen();
+void FavoriteSettingScreen();
 string PasswordCensoring();
 bool PasswordTypoChecker(string pass1, string pass2);
 void OnExit();
@@ -242,7 +242,10 @@ void HomeScreen()
 		ContactScreen();
 		break;
 	case '3':
-		FavoriteScreen();
+		ClearConsole();
+		current_user->ViewFavorites();
+		system("pause");
+		HomeScreen();
 		break;
 	case '4':
 		LoginRegisterMenu();
@@ -258,7 +261,7 @@ void HomeScreen()
 void MessageScreen() 
 {	
 	ClearConsole();
-	cout << "1. Send a message.\n2. Pop last message.\n3. View all messages.\n4. View messages from a specific user.\n5. View contacts.\n6. Return home screen.\n\nYour choice: ";
+	cout << "1. Send a message.\n2. Pop last message.\n3. View all sent messages\n4. View all received messages.\n5. View received messages from a specific user.\n6. View contacts.\n7. Return home screen.\n\nYour choice: ";
 	char choice;
 	cin >> choice;
 
@@ -331,19 +334,28 @@ void MessageScreen()
 	}
 
 	case '3':
+		ClearConsole();
+		cout << "Here is the messages you sent, from most recent to oldest:\n";
+		current_user->ViewSentMessages();
+		system("pause");
+		MessageScreen();
+		break;
+	case '4':
+		ClearConsole();
 		cout << "Here is your inbox from most recent to oldest:\n";
-		current_user->ViewMessages();
+		current_user->ViewReceivedMessages();
 		//Add Adding to Favorite Logic
+		FavoriteSettingScreen();
 		system("pause");
 		MessageScreen();
 		break;
 
-	case '4':
+	case '5':
 	{
 		cout << "Please enter the user ID to display their messages\n";
 		int ID;
 		cin >> ID;
-		if (current_user->ViewMessages(ID))
+		if (current_user->ViewReceivedMessages(ID))
 		{
 			cout << "------------------------------------" << endl;
 		}
@@ -352,14 +364,15 @@ void MessageScreen()
 			cout << "No messages are found" << endl;
 		}
 		//Add Adding to Favorite Logic
+
 		system("pause");
 		MessageScreen();
 		break;
 	}
-	case '5':
+	case '6':
 		ContactScreen();
 		break;
-	case '6':
+	case '7':
 		HomeScreen();
 		break;
 
@@ -381,7 +394,7 @@ void ViewMessageFromContactScreen()
 	if (!ID)
 		HomeScreen();
 	else {
-		if (current_user->ViewMessages(ID)) // Momkn n5liha boolean;
+		if (current_user->ViewReceivedMessages(ID)) // Momkn n5liha boolean;
 		{
 
 		}
@@ -393,49 +406,7 @@ void ViewMessageFromContactScreen()
 	}
 }
 
-void FavoriteScreen()
-{
-	ClearConsole();
-	cout << "1. View all favorite messages.\n2. Return home screen.\n\nYour choice: ";
 
-	char choice;
-	cin >> choice;
-
-	cout << "\n";
-
-	switch (choice)
-	{
-	case '1':
-	{
-		if (current_user)
-		{
-			if (!current_user->ViewFavorites())
-			{
-				SystemPause();
-				HomeScreen();
-			}
-		}
-		else
-		{
-			cout << "Please log in first to view your favorite messages.";
-			SystemPause();
-			LoginRegisterMenu();
-		}
-		break;
-	}
-
-	case '2':
-	{
-		HomeScreen();
-		break;
-	}
-
-	default:
-		cout << "Please enter a valid choice.\n";
-		SystemPause();
-		FavoriteScreen();
-	}
-}
 
 void ContactScreen()
 {
@@ -511,3 +482,36 @@ void ContactScreen()
 	}
 
 }
+
+void FavoriteSettingScreen() {
+	cout << "Press 1 to add a message to favorites.\n";
+	char choice;
+	cin >> choice;
+	if (choice == '1')
+	{
+		int ID, Ind;
+		cout << "Please enter the user id and message index you wish to add to your favorite list, and any key to go back.\n";
+		cin >> ID >> Ind;
+		if (current_user->PutFavorite(ID, Ind)) {
+			cout << "Message "<<Ind<< "from user "<<ID<<" has been added to favorite.\n";
+
+		}
+		else {
+			cout << "Something went wrong try again.\n";
+			system("pause");
+			ClearConsole();
+			cout << "Here is your inbox from most recent to oldest:\n";
+			current_user->ViewReceivedMessages();
+			//Add Adding to Favorite Logic
+			FavoriteSettingScreen();
+			system("pause");
+			MessageScreen();
+
+		}
+	}
+	else {
+		system("pause");
+		MessageScreen();
+	}
+}
+ 

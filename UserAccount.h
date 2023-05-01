@@ -28,10 +28,11 @@ public:
 	char SendUserMessage(UserAccount* recipient, string content);
 	bool PopMessage(UserAccount* user);
 	void ViewContacts(); //ordered by most messages
-	void ViewMessages();
-	bool ViewMessages(int User_ID);
+	void ViewReceivedMessages();
+	bool ViewReceivedMessages(int User_ID);
+	void ViewSentMessages();
 	bool PutFavorite(int User_ID, int Msg_Index);
-	bool RemoveOldestFavorite(int User_ID);
+	bool RemoveOldestFavorite();
 	bool ViewFavorites();
 
 	int GetMessagesFromUser(UserAccount* user);

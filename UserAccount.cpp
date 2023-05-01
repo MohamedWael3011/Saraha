@@ -165,7 +165,7 @@ void UserAccount::ViewContacts() {
 	}
 }
 
-void UserAccount::ViewMessages() {
+void UserAccount::ViewReceivedMessages() {
 	if (ReceivedMessages.empty() == true)
 	{
 		cout << "No messages to be displayed" << endl;
@@ -194,7 +194,7 @@ void UserAccount::ViewMessages() {
 		}
 	}
 }
-bool UserAccount::ViewMessages(int User_ID) {
+bool UserAccount::ViewReceivedMessages(int User_ID) {
 	stack<Message> UserMessages;
 
 	if (ReceivedMessages.find(User_ID) == ReceivedMessages.end())
@@ -215,12 +215,55 @@ bool UserAccount::ViewMessages(int User_ID) {
 	}
 
 }
-bool UserAccount::PutFavorite(int User_ID, int Msg_Index) {
-	return false;
-
+void UserAccount::ViewSentMessages()
+{
+	stack<pair<int, Message>>Sent;
+	Sent = SentMessages;
+	while (!Sent.empty())
+	{
+		cout << Sent.top().second.Index << "| User ID: " << Sent.top().first << "| " << Sent.top().second.Content << "  ";
+		PrintDate(Sent.top().second.SentDate);
+		Sent.pop();
+	}
+	
 }
-bool UserAccount::RemoveOldestFavorite(int User_ID) {
-	return false;
+
+bool UserAccount::PutFavorite(int User_ID, int Msg_Index) {
+	if (ReceivedMessages.find(User_ID) == ReceivedMessages.end())
+	{
+		return false;
+	}
+	else
+	{
+		stack<Message> chat = ReceivedMessages[User_ID];
+		while (!chat.empty())
+		{
+			if (chat.top().Index != Msg_Index)
+			{
+				chat.pop();
+			}
+			else
+			{
+				if (chat.top().IsFavorite == true)
+				{
+					cout << "This message is already a favourite";
+					return false;
+				}
+				else
+				{
+					chat.top().IsFavorite = true;
+					Favorites.emplace(User_ID, chat.top());
+					return true;
+				}
+			}
+		}
+	}
+}
+bool UserAccount::RemoveOldestFavorite() {
+	if (Favorites.empty())
+		return false;
+	Favorites.pop();
+	return true;
 
 }
 
