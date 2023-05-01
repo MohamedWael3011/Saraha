@@ -17,12 +17,12 @@ void TestingViewContact()
 	Message m1 = { 1,"Test",time(NULL),false };
 	Message m2 = { 2,"Test",time(NULL),false };
 
-	acc.Messages[1].push(m);
+	/*acc.Messages[1].push(m);
 	acc.Messages[1].push(m1);
 	acc.Messages[1].push(m2);
 	acc.Messages[2].push(m);
 	acc.Messages[2].push(m1);
-	acc.Messages[3].push(m);
+	acc.Messages[3].push(m);*/
 	acc.ViewContacts();
 }
 
@@ -275,10 +275,9 @@ void MessageScreen()
 		string msg;
 		getline(cin, msg, '\n');
 
-		UserAccount* receiver = cfg.GetUserAccount(ID);
-		if (receiver != NULL)
+		if (UserAccount* receiver = cfg.GetUserAccount(ID))
 		{
-			receiver->ReceiveMessage(current_user->ID(), msg);
+			current_user->SendUserMessage(receiver, msg);
 			cout << "Message has been sent.\n";
 		}
 		else
@@ -296,7 +295,7 @@ void MessageScreen()
 		UserAccount* receiver = cfg.GetUserAccount(ID);
 		if (receiver != NULL)
 		{
-			bool result = receiver->PopMessage(current_user->ID());
+			bool result = current_user->PopMessage(receiver);
 			if (result) {
 				cout << "Message has been popped.\n";
 			}

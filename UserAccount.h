@@ -10,7 +10,7 @@ private:
 	string m_password;
 public:
 	set<int> Contacts;
-	unordered_map<int, stack<Message>> Messages;
+	unordered_map<int, pair<stack<Message>, stack<Message>>> Messages;
 	queue<pair<int, Message>> Favorites;
 
 public:
@@ -21,8 +21,8 @@ public:
 
 	bool AddContact(int User_ID);
 	bool RemoveContact(int User_ID);
-	void ReceiveMessage(int Sender_ID, string content);
-	bool PopMessage(int User_ID);
+	bool SendUserMessage(UserAccount* recipient, string content);
+	bool PopMessage(UserAccount* user);
 	void ViewContacts(); //ordered by most messages
 	void ViewMessages();
 	bool ViewMessages(int User_ID);

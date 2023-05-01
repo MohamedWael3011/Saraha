@@ -74,43 +74,76 @@ bool UserAccount::RemoveContact(int User_ID) {
 	return false;
 }
 
-void UserAccount::ReceiveMessage(int Sender_ID, string content)
+bool UserAccount::SendUserMessage(UserAccount* recipient, string content)
 {
+	if (!recipient)
+		return false;
+
 	SYSTEMTIME time;
 	GetSystemTime(&time);
 	Message msg{ 0, content, time };
-
-	auto it = Messages.find(Sender_ID);
+	
+	// >> SENDER SIDE <<
+	auto it = Messages.find(recipient->m_id);
 
 	// if received msgs from this user before
 	if (it != Messages.end())
 	{
-		msg.Index = (!it->second.empty() ? it->second.top().Index : 0) + 1;
-		it->second.push(msg);
+		msg.Index = (!it->second.first.empty() ? it->second.first.top().Index : 0) + 1;
+		it->second.first.push(msg);
 	}
 
 	// first time to receive msg from this user
 	else
 	{
-		stack<Message> msgs;
-		msgs.push(msg);
+		pair<stack<Message>, stack<Message>> msgs;
+		msgs.first.push(msg);
 
-		Messages[Sender_ID] = msgs;
+		Messages[recipient->m_id] = msgs;
 	}
+
+	
+	// >> RECIPIENT/RECEIVER SIDE <<
+	it = recipient->Messages.find(m_id);
+
+	// if received msgs from this user before
+	if (it != recipient->Messages.end())
+	{
+		msg.Index = (!it->second.second.empty() ? it->second.second.top().Index : 0) + 1;
+		it->second.second.push(msg);
+	}
+
+	// first time to receive msg from this user
+	else
+	{
+		pair<stack<Message>, stack<Message>> msgs;
+		msgs.second.push(msg);
+
+		recipient->Messages[m_id] = msgs;
+	}
+	return true;
 }
 
-bool UserAccount::PopMessage(int User_ID) {
+bool UserAccount::PopMessage(UserAccount* user) {
 
-	auto it = Messages.find(User_ID);
-	if (it == Messages.end() || it->second.empty()) {
-		
+	// Pop from sender side
+	auto it = Messages.find(user->m_id);
+	if (it == Messages.end() || it->second.first.empty()) {
 		return false;
 	}
 	else {
-		it->second.pop();
-		return true;
+		it->second.first.pop();
 	}
 
+	// Pop from receiver side
+	it = user->Messages.find(m_id);
+	if (it == user->Messages.end() || it->second.second.empty()) {
+		return false;
+	}
+	else {
+		it->second.second.pop();
+		return true;
+	}
 }
 
 void UserAccount::ViewContacts() { 
@@ -120,7 +153,7 @@ void UserAccount::ViewContacts() {
 	for (itr = Contacts.begin();itr != Contacts.end(); itr++) // Retrieving Contact's Sent Messages
 	{
 		int ContactID = *itr;
-		int ContactMessages= Messages[ContactID].size();
+		int ContactMessages = Messages[ContactID].first.size();
 		ContactTotalMessages.push_back(make_pair(ContactMessages, ContactID)); // Storing as (Messages,ID) for easier sort lol :')
 	}
 	if (ContactTotalMessages.empty()) {
@@ -142,16 +175,16 @@ void UserAccount::ViewMessages() {
 	else
 	{
 		vector <pair<Message, int>> AllMessages;
-		stack <Message> UserMessages;
-		unordered_map<int, stack<Message>>::iterator it;
+		pair<stack<Message>, stack<Message>> UserMessages;
+		unordered_map<int, pair<stack<Message>, stack<Message>>>::iterator it;
 
 		for (it = Messages.begin(); it != Messages.end(); it++)
 		{
 			UserMessages = it->second;
-			while (!UserMessages.empty())
+			while (!UserMessages.second.empty())
 			{
-				AllMessages.emplace_back(UserMessages.top(), it->first);
-				UserMessages.pop();
+				AllMessages.emplace_back(UserMessages.second.top(), it->first);
+				UserMessages.second.pop();
 			}
 		}
 		std::sort(AllMessages.begin(), AllMessages.end(), compareByTime);
@@ -164,7 +197,7 @@ void UserAccount::ViewMessages() {
 	}
 }
 bool UserAccount::ViewMessages(int User_ID) {
-	stack <Message> UserMessages;
+	pair<stack<Message>, stack<Message>> UserMessages;
 
 	if (Messages.find(User_ID) == Messages.end())
 	{
@@ -173,12 +206,12 @@ bool UserAccount::ViewMessages(int User_ID) {
 	else
 	{
 		UserMessages = Messages[User_ID];
-		while (!UserMessages.empty())
+		while (!UserMessages.second.empty())
 		{
 
-			cout << UserMessages.top().Index << "| " << UserMessages.top().Content<<"  ";
-			PrintDate(UserMessages.top().SentDate);
-			UserMessages.pop();
+			cout << UserMessages.second.top().Index << "| " << UserMessages.second.top().Content<<"  ";
+			PrintDate(UserMessages.second.top().SentDate);
+			UserMessages.second.pop();
 		}
 		return true;
 	}
@@ -221,7 +254,7 @@ bool UserAccount::ViewFavorites(void)
 }
 
 int UserAccount::GetMessagesFromUser(UserAccount* user) {
-	return Messages[user->m_id].size();
+	return Messages[user->m_id].second.size();
 
 }
 bool UserAccount::GetContact(int User_ID) {
