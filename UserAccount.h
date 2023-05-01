@@ -10,6 +10,7 @@ private:
 	string m_password;
 public:
 	set<int> Contacts;
+	set<int> Blocked;
 	unordered_map<int, pair<stack<Message>, stack<Message>>> Messages;
 	queue<pair<int, Message>> Favorites;
 
@@ -21,7 +22,9 @@ public:
 
 	bool AddContact(int User_ID);
 	bool RemoveContact(int User_ID);
-	bool SendUserMessage(UserAccount* recipient, string content);
+	bool Block(int User_ID);
+	bool Unblock(int User_ID);
+	char SendUserMessage(UserAccount* recipient, string content);
 	bool PopMessage(UserAccount* user);
 	void ViewContacts(); //ordered by most messages
 	void ViewMessages();
@@ -34,4 +37,5 @@ public:
 	int ID() const;
 	string Username() const;
 	string Password() const;
+	bool IsBlocked(int User_ID);
 };

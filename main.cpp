@@ -277,8 +277,27 @@ void MessageScreen()
 
 		if (UserAccount* receiver = cfg.GetUserAccount(ID))
 		{
-			current_user->SendUserMessage(receiver, msg);
-			cout << "Message has been sent.\n";
+			switch (current_user->SendUserMessage(receiver, msg))
+			{
+			case 0:
+				cout << "Message has been sent.\n";
+				break;
+
+			case 1:
+				cout << "User was not found.\n";
+				break;
+
+			case 2:
+				cout << "Could not deliver message, you may have blocked this user.\n";
+				break;
+
+			case 3:
+				cout << "Could not deliver message, you may have been blocked by this user.\n";
+				break;
+
+			default:
+				cout << "Could not deliver message for unknown reason.\n";
+			}
 		}
 		else
 			cout << "User was not found.\n";
@@ -423,7 +442,7 @@ void ContactScreen()
 	ClearConsole();
 	current_user->ViewContacts();
 	cout << "------------------------------------------------------\n\n";
-	cout << "1. Add new contact\n2. Remove a contact.\n3. Return Home\n\nYour choice: ";
+	cout << "1. Add new contact\n2. Remove a contact.\n3. Block user.\n4. Unblock user.\n5. Return Home\n\nYour choice: ";
 	char choice;
 	int ID;
 
@@ -450,7 +469,38 @@ void ContactScreen()
 		SystemPause();
 		ContactScreen();
 		break;
+
 	case '3':
+	{
+		cout << "Please enter the User ID your want to block\n";
+		cin >> ID;
+
+		if (current_user->Block(ID))
+			cout << ID << " has been blocked.\n";
+		else
+			cout << ID << " is already blocked!\n";
+
+		SystemPause();
+		ContactScreen();
+		break;
+	}
+
+	case '4':
+	{
+		cout << "Please enter the User ID your want to unblock\n";
+		cin >> ID;
+
+		if (current_user->Unblock(ID))
+			cout << ID << " has been unblocked.\n";
+		else
+			cout << ID << " is not blocked!\n";
+
+		SystemPause();
+		ContactScreen();
+		break;
+	}
+
+	case '5':
 		HomeScreen();
 		break;
 

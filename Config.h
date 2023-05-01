@@ -26,11 +26,13 @@ private:
 
 	void LoadAccounts(IniFile& cfg);
 	void LoadContacts(UserAccount& acc, int idx, IniFile& cfg);
+	void LoadBlocks(UserAccount& acc, int idx, IniFile& cfg);
 	void LoadMessages(UserAccount& acc, int idx, IniFile& cfg);
 	void LoadFavoriteMessages(UserAccount& acc, int idx, IniFile& cfg);
 
 	void WriteAccounts(IniFile& cfg);
 	void WriteContacts(UserAccount& acc, int idx, IniFile& cfg);
+	void WriteBlocks(UserAccount& acc, int idx, IniFile& cfg);
 	void WriteMessages(UserAccount& acc, int idx, IniFile& cfg);
 	void WriteFavoriteMessages(UserAccount& acc, int idx, IniFile& cfg);
 

@@ -107,6 +107,7 @@ void Config::LoadAccounts(IniFile& cfg)
 		);
 
 		LoadContacts(acc, i, cfg);
+		LoadBlocks(acc, i, cfg);
 		LoadMessages(acc, i, cfg);
 		LoadFavoriteMessages(acc, i, cfg);
 
@@ -127,6 +128,17 @@ void Config::LoadContacts(UserAccount& acc, int idx, IniFile& cfg)
 		acc.Contacts.insert(cfg.ReadKeyInt("Account_Contact_" + to_string(idx) + '_' + to_string(i)));
 }
 
+void Config::LoadBlocks(UserAccount& acc, int idx, IniFile& cfg)
+{
+	// clear
+	acc.Contacts.clear();
+
+	// load
+	int blockscnt = cfg.ReadKeyInt("Account_Blocks_Count_" + to_string(idx));
+	for (int i = 1; i <= blockscnt; ++i)
+		acc.Blocked.insert(cfg.ReadKeyInt("Account_Block_" + to_string(idx) + '_' + to_string(i)));
+}
+
 void Config::LoadMessages(UserAccount& acc, int idx, IniFile& cfg)
 {
 	// clear
@@ -141,7 +153,7 @@ void Config::LoadMessages(UserAccount& acc, int idx, IniFile& cfg)
 		msg.Index = cfg.ReadKeyInt("Account_Sent_Message_Index_" + to_string(idx) + '_' + to_string(i));
 		msg.Content = cfg.ReadKey("Account_Sent_Message_Content_" + to_string(idx) + '_' + to_string(i));
 		msg.SentDate = StringToDate(cfg.ReadKey("Account_Sent_Message_Date_" + to_string(idx) + '_' + to_string(i)));
-		msg.IsFavorite = cfg.ReadKeyInt("Account_Sent_Message_Favorite_" + to_string(idx) + '_' + to_string(i));
+		msg.Seen = cfg.ReadKeyInt("Account_Sent_Message_Seen_" + to_string(idx) + '_' + to_string(i));
 
 		//AppendMessage(acc, cfg.ReadKeyInt("Account_Sent_Message_Sender_" + to_string(idx) + '_' + to_string(i)), msg, true);
 		AppendMessage(acc, acc.ID(), msg, true);
@@ -153,7 +165,7 @@ void Config::LoadMessages(UserAccount& acc, int idx, IniFile& cfg)
 		msg.Index = cfg.ReadKeyInt("Account_Received_Message_Index_" + to_string(idx) + '_' + to_string(i));
 		msg.Content = cfg.ReadKey("Account_Received_Message_Content_" + to_string(idx) + '_' + to_string(i));
 		msg.SentDate = StringToDate(cfg.ReadKey("Account_Received_Message_Date_" + to_string(idx) + '_' + to_string(i)));
-		msg.IsFavorite = cfg.ReadKeyInt("Account_Received_Message_Favorite_" + to_string(idx) + '_' + to_string(i));
+		msg.Seen = cfg.ReadKeyInt("Account_Received_Message_Seen_" + to_string(idx) + '_' + to_string(i));
 
 		AppendMessage(acc, cfg.ReadKeyInt("Account_Received_Message_Sender_" + to_string(idx) + '_' + to_string(i)), msg, false);
 	}
@@ -166,7 +178,6 @@ void Config::LoadFavoriteMessages(UserAccount& acc, int idx, IniFile& cfg)
 
 	// load
 	Message msg;
-	msg.IsFavorite = true;
 
 	int msgcnt = cfg.ReadKeyInt("Account_Favorites_Count_" + to_string(idx));
 
@@ -175,6 +186,7 @@ void Config::LoadFavoriteMessages(UserAccount& acc, int idx, IniFile& cfg)
 		msg.Index = cfg.ReadKeyInt("Account_Favorite_MsgIndex_" + to_string(idx) + '_' + to_string(i));
 		msg.Content = cfg.ReadKey("Account_Favorite_Content_" + to_string(idx) + '_' + to_string(i));
 		msg.SentDate = StringToDate(cfg.ReadKey("Account_Favorite_Date_" + to_string(idx) + '_' + to_string(i)));
+		msg.Seen = cfg.ReadKeyInt("Account_Favorite_Seen_" + to_string(idx) + '_' + to_string(i));
 
 		acc.Favorites.push(pair<int, Message>(cfg.ReadKeyInt("Account_Favorite_Sender_" + to_string(idx) + '_' + to_string(i)), msg));
 	}
@@ -196,6 +208,7 @@ void Config::WriteAccounts(IniFile& cfg)
 		cfg.WriteKey("Account_Password_" + to_string(i), it->second.Password());
 
 		WriteContacts(it->second, i, cfg);
+		WriteBlocks(it->second, i, cfg);
 		WriteMessages(it->second, i, cfg);
 		WriteFavoriteMessages(it->second, i, cfg);
 	}
@@ -208,6 +221,15 @@ void Config::WriteContacts(UserAccount& acc, int idx, IniFile& cfg)
 	int i = 1;
 	for (auto it = acc.Contacts.begin(); it != acc.Contacts.end(); ++it, ++i)
 		cfg.WriteKeyInt("Account_Contact_" + to_string(idx) + '_' + to_string(i), *it);
+}
+
+void Config::WriteBlocks(UserAccount& acc, int idx, IniFile& cfg)
+{
+	cfg.WriteKeyInt("Account_Blocks_Count_" + to_string(idx), acc.Blocked.size());
+
+	int i = 1;
+	for (auto it = acc.Blocked.begin(); it != acc.Blocked.end(); ++it, ++i)
+		cfg.WriteKeyInt("Account_Block_" + to_string(idx) + '_' + to_string(i), *it);
 }
 
 void Config::WriteMessages(UserAccount& acc, int idx, IniFile& cfg)
@@ -234,7 +256,7 @@ void Config::WriteMessages(UserAccount& acc, int idx, IniFile& cfg)
 			cfg.WriteKeyInt("Account_Sent_Message_Index_" + to_string(idx) + '_' + to_string(i), msg.Index);
 			cfg.WriteKey("Account_Sent_Message_Content_" + to_string(idx) + '_' + to_string(i), msg.Content);
 			cfg.WriteKey("Account_Sent_Message_Date_" + to_string(idx) + '_' + to_string(i), DateToString(msg.SentDate));
-			cfg.WriteKeyInt("Account_Sent_Message_Favorite_" + to_string(idx) + '_' + to_string(i), msg.IsFavorite);
+			cfg.WriteKeyInt("Account_Sent_Message_Seen_" + to_string(idx) + '_' + to_string(i), msg.Seen);
 
 			msgs.first.pop();
 			--i;
@@ -253,7 +275,7 @@ void Config::WriteMessages(UserAccount& acc, int idx, IniFile& cfg)
 			cfg.WriteKeyInt("Account_Received_Message_Index_" + to_string(idx) + '_' + to_string(i), msg.Index);
 			cfg.WriteKey("Account_Received_Message_Content_" + to_string(idx) + '_' + to_string(i), msg.Content);
 			cfg.WriteKey("Account_Received_Message_Date_" + to_string(idx) + '_' + to_string(i), DateToString(msg.SentDate));
-			cfg.WriteKeyInt("Account_Received_Message_Favorite_" + to_string(idx) + '_' + to_string(i), msg.IsFavorite);
+			cfg.WriteKeyInt("Account_Received_Message_Seen_" + to_string(idx) + '_' + to_string(i), msg.Seen);
 
 			msgs.second.pop();
 			--i;
@@ -281,6 +303,7 @@ void Config::WriteFavoriteMessages(UserAccount& acc, int idx, IniFile& cfg)
 		cfg.WriteKeyInt("Account_Favorite_MsgIndex_" + to_string(idx) + '_' + to_string(i), favorite.second.Index);
 		cfg.WriteKey("Account_Favorite_Content_" + to_string(idx) + '_' + to_string(i), favorite.second.Content);
 		cfg.WriteKey("Account_Favorite_Date_" + to_string(idx) + '_' + to_string(i), DateToString(favorite.second.SentDate));
+		cfg.WriteKeyInt("Account_Favorite_Seen_" + to_string(idx) + '_' + to_string(i), favorite.second.Seen);
 
 		favorites.pop();
 		++i;

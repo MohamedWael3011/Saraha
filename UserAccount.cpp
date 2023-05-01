@@ -63,7 +63,6 @@ bool UserAccount::AddContact(int User_ID) {
 
 }
 
-
 bool UserAccount::RemoveContact(int User_ID) {
 
 	if (Contacts.find(User_ID) != Contacts.end()) {
@@ -74,10 +73,29 @@ bool UserAccount::RemoveContact(int User_ID) {
 	return false;
 }
 
-bool UserAccount::SendUserMessage(UserAccount* recipient, string content)
+bool UserAccount::Block(int User_ID)
+{
+	if (!IsBlocked(User_ID))
+	{
+		Blocked.insert(User_ID);
+		return true;
+	}
+	return false;
+}
+
+bool UserAccount::Unblock(int User_ID)
+{
+	return Blocked.erase(User_ID);
+}
+
+char UserAccount::SendUserMessage(UserAccount* recipient, string content)
 {
 	if (!recipient)
-		return false;
+		return 1;
+	else if (IsBlocked(recipient->m_id))
+		return 2;
+	else if (recipient->IsBlocked(m_id))
+		return 3;
 
 	SYSTEMTIME time;
 	GetSystemTime(&time);
@@ -121,7 +139,7 @@ bool UserAccount::SendUserMessage(UserAccount* recipient, string content)
 
 		recipient->Messages[m_id] = msgs;
 	}
-	return true;
+	return 0;
 }
 
 bool UserAccount::PopMessage(UserAccount* user) {
@@ -263,4 +281,9 @@ bool UserAccount::GetContact(int User_ID) {
 		return true;
 	}
 	return NULL;
+}
+
+bool UserAccount::IsBlocked(int User_ID)
+{
+	return Blocked.find(User_ID) != Blocked.end();
 }
